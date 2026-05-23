@@ -11,9 +11,7 @@ export const createVisitor = async (visitorData) => {
 };
 
 export const updateVisitor = async (id, visitorData) => {
-    const response = await API.put(`/visitor/${id}`, visitorData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const response = await API.put(`/visitor/${id}`, visitorData);
     return response.data;
 };
 
