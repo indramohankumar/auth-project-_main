@@ -54,7 +54,9 @@ function Appointment() {
   }
 
   const visitorOptions = useMemo(() => {
-    return [...visitors].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    return [...visitors].sort((a, b) =>
+      (a.name || "").localeCompare(b.name || "")
+    );
   }, [visitors]);
 
   const handleInputChange = (e) => {
@@ -130,152 +132,261 @@ function Appointment() {
     "shadow-sm outline-none transition " +
     "focus:border-white/20 focus:ring-4 focus:ring-white/10";
 
+  // small helper to make the UI feel “cleaner” without changing any stored values
+  const formatVisitDate = (value) => {
+    if (!value) return "—";
+    try {
+      return new Date(value).toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return new Date(value).toLocaleString();
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950">
-      {/* same dark background theme */}
+      {/* Background (same theme, slightly refined for depth) */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-950 to-slate-900" />
-        <div className="absolute -top-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute -left-44 top-20 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute -right-52 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -top-44 left-1/2 h-[26rem] w-[62rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -left-48 top-24 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute -right-56 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_30%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.65)_70%,rgba(0,0,0,0.92)_100%)]" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-semibold tracking-widest text-white/50 uppercase">
               Scheduling
             </p>
-            <h1 className="text-3xl font-black tracking-tight text-white">Appointments</h1>
+
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-black tracking-tight text-white">
+                Appointments
+              </h1>
+
+              <span
+                className={[
+                  "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold",
+                  loading
+                    ? "bg-white/10 text-white/70 border border-white/10"
+                    : "bg-emerald-500/15 text-emerald-200 border border-emerald-500/20",
+                ].join(" ")}
+              >
+                {loading ? "Loading" : "Ready"}
+              </span>
+            </div>
+
             <p className="mt-1 text-sm text-white/55">
               Create appointments, approve requests, and generate visitor passes.
             </p>
           </div>
 
-          <button
-            onClick={() => setShowModal(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black
-                       shadow-sm hover:bg-white/90 focus:outline-none focus:ring-4 focus:ring-white/20 w-fit"
-          >
-            + Schedule Appointment
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={fetchAppointments}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white/80
+                         hover:bg-white/10 transition focus:outline-none focus:ring-4 focus:ring-white/10
+                         disabled:opacity-60 disabled:cursor-not-allowed"
+              title="Refresh appointments"
+            >
+              <svg
+                className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Refresh
+            </button>
+
+            <button
+              onClick={() => setShowModal(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black
+                         shadow-sm hover:bg-white/90 focus:outline-none focus:ring-4 focus:ring-white/20"
+            >
+              + Schedule Appointment
+            </button>
+          </div>
         </div>
 
         {/* Table card */}
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] overflow-x-auto">
-          <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-white/[0.04]">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
-                  Visitor
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
-                  Host
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
-                  Date &amp; Time
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
-                  Purpose
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+        <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="text-sm font-extrabold text-white tracking-tight">
+                Appointment List
+              </h2>
+              <p className="text-xs text-white/50 mt-0.5">
+                Approve pending requests and generate passes for approved visits.
+              </p>
+            </div>
 
-            <tbody className="divide-y divide-white/5">
-              {loading ? (
+            <div className="text-sm text-white/55">
+              Total:{" "}
+              <span className="font-semibold text-white">{appointments.length}</span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-white/10">
+              <thead className="bg-white/[0.04]">
                 <tr>
-                  <td colSpan="6" className="text-center py-10 text-white/50">
-                    <span className="inline-flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full bg-white/30 animate-pulse" />
-                      Loading…
-                    </span>
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
+                    Visitor
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
+                    Host
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
+                    Date &amp; Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
+                    Purpose
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ) : appointments.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-10 text-white/50">
-                    No appointments found.
-                  </td>
-                </tr>
-              ) : (
-                appointments.map((appt) => (
-                  <tr key={appt._id} className="hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">
-                      {appt.visitor ? appt.visitor.name : "Unknown Visitor"}
-                    </td>
+              </thead>
 
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
-                      {appt.host ? appt.host.name : "Unknown Host"}
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
-                      {new Date(appt.visitdate).toLocaleString()}
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
-                      {appt.purpose}
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span
-                        className={[
-                          "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize",
-                          STATUS_BADGE[appt.status] ||
-                            "bg-white/10 text-white/70 border border-white/10",
-                        ].join(" ")}
-                      >
-                        {appt.status}
+              <tbody className="divide-y divide-white/5">
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-10 text-white/50">
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full bg-white/30 animate-pulse" />
+                        Loading…
                       </span>
                     </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center gap-3">
-                        {appt.status === "pending" && (
-                          <button
-                            onClick={() => handleApprove(appt._id)}
-                            disabled={actionId === appt._id}
-                            className="rounded-lg px-3 py-1.5 text-xs font-semibold
-                                       bg-indigo-500/15 text-indigo-200 border border-indigo-500/20
-                                       hover:bg-indigo-500/20 transition
-                                       disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            {actionId === appt._id ? "Approving…" : "Approve"}
-                          </button>
-                        )}
-
-                        {appt.status === "approved" && (
-                          <button
-                            onClick={() => handleGeneratePass(appt._id)}
-                            disabled={actionId === appt._id}
-                            className="rounded-lg px-3 py-1.5 text-xs font-semibold
-                                       bg-emerald-500/15 text-emerald-200 border border-emerald-500/20
-                                       hover:bg-emerald-500/20 transition
-                                       disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            {actionId === appt._id ? "Generating…" : "Generate Pass"}
-                          </button>
-                        )}
-                      </div>
+                  </tr>
+                ) : appointments.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-12">
+                      <p className="text-sm font-semibold text-white/80">
+                        No appointments found
+                      </p>
+                      <p className="text-xs text-white/50 mt-1">
+                        Schedule an appointment to get started.
+                      </p>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  appointments.map((appt) => (
+                    <tr key={appt._id} className="hover:bg-white/5 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-white">
+                          {appt.visitor ? appt.visitor.name : "Unknown Visitor"}
+                        </div>
+                        <div className="text-xs text-white/40">
+                          {appt.visitor?.email || ""}
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
+                        {appt.host ? appt.host.name : "Unknown Host"}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60 tabular-nums">
+                        {formatVisitDate(appt.visitdate)}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
+                        {appt.purpose || "—"}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span
+                          className={[
+                            "inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-semibold capitalize",
+                            STATUS_BADGE[appt.status] ||
+                              "bg-white/10 text-white/70 border border-white/10",
+                          ].join(" ")}
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-current opacity-60" />
+                          {appt.status}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center gap-3">
+                          {appt.status === "pending" && (
+                            <button
+                              onClick={() => handleApprove(appt._id)}
+                              disabled={actionId === appt._id}
+                              className="rounded-lg px-3 py-1.5 text-xs font-semibold
+                                         bg-indigo-500/15 text-indigo-200 border border-indigo-500/20
+                                         hover:bg-indigo-500/20 transition
+                                         disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              {actionId === appt._id ? "Approving…" : "Approve"}
+                            </button>
+                          )}
+
+                          {appt.status === "approved" && (
+                            <button
+                              onClick={() => handleGeneratePass(appt._id)}
+                              disabled={actionId === appt._id}
+                              className="rounded-lg px-3 py-1.5 text-xs font-semibold
+                                         bg-emerald-500/15 text-emerald-200 border border-emerald-500/20
+                                         hover:bg-emerald-500/20 transition
+                                         disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              {actionId === appt._id ? "Generating…" : "Generate Pass"}
+                            </button>
+                          )}
+
+                          {/* keep layout stable when no actions */}
+                          {appt.status !== "pending" && appt.status !== "approved" ? (
+                            <span className="text-xs text-white/35">—</span>
+                          ) : null}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Generated Pass Modal */}
         {generatedPassData && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div className="w-full max-w-sm rounded-3xl border border-white/10 bg-neutral-950 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.95)] p-7 text-center">
+              <div className="mx-auto mb-4 h-10 w-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
+                <svg
+                  className="h-5 w-5 text-emerald-200"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+
               <h2 className="text-2xl font-bold text-white mb-2">Pass Generated</h2>
 
               <div className="mb-6">
@@ -317,7 +428,9 @@ function Appointment() {
               <div className="p-7">
                 <div className="flex items-start justify-between gap-4 mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Schedule Appointment</h2>
+                    <h2 className="text-2xl font-bold text-white">
+                      Schedule Appointment
+                    </h2>
                     <p className="mt-1 text-sm text-white/55">
                       Select a visitor and choose date/time.
                     </p>
@@ -358,35 +471,37 @@ function Appointment() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-white/80">
-                      Date &amp; Time <span className="text-rose-300">*</span>
-                    </label>
-                    <input
-                      required
-                      type="datetime-local"
-                      name="visitdate"
-                      value={formData.visitdate}
-                      onChange={handleInputChange}
-                      className={inputDark}
-                      disabled={submitting}
-                    />
-                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm font-medium text-white/80">
+                        Date &amp; Time <span className="text-rose-300">*</span>
+                      </label>
+                      <input
+                        required
+                        type="datetime-local"
+                        name="visitdate"
+                        value={formData.visitdate}
+                        onChange={handleInputChange}
+                        className={inputDark}
+                        disabled={submitting}
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-white/80">
-                      Purpose <span className="text-rose-300">*</span>
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="purpose"
-                      value={formData.purpose}
-                      onChange={handleInputChange}
-                      className={inputDark}
-                      placeholder="e.g. Interview, Meeting, Delivery"
-                      disabled={submitting}
-                    />
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm font-medium text-white/80">
+                        Purpose <span className="text-rose-300">*</span>
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        name="purpose"
+                        value={formData.purpose}
+                        onChange={handleInputChange}
+                        className={inputDark}
+                        placeholder="e.g. Interview, Meeting, Delivery"
+                        disabled={submitting}
+                      />
+                    </div>
                   </div>
 
                   <div className="flex justify-end gap-3 pt-2">
@@ -409,6 +524,13 @@ function Appointment() {
                     </button>
                   </div>
                 </form>
+
+                <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs text-white/50">
+                    Tip: Only <span className="text-white/70 font-semibold">approved</span>{" "}
+                    appointments can generate a pass.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
