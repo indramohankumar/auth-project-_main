@@ -14,9 +14,7 @@ const dotenv=require('dotenv');
 const app=express();
 dotenv.config();
 app.use(express.json());
-app.use(cors({
-    origin:'http://localhost:5173'
-}));
+app.use(cors()); // Allow all origins for production
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/passes", passroutes);
 app.use("/api/check", checkroutes);
@@ -50,7 +48,7 @@ app.use('/api/appointment',appointmentroutes);
 app.get('/',(req,res)=>{
     res.send("server is running");
 });
-const PORT=process.env.PORT || 5000;
-app.listen(5000,()=>{
-    console.log("server is running on port 5000");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`server is running on port ${PORT}`);
 });
