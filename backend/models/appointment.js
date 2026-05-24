@@ -22,6 +22,27 @@ const appointmentSchema=new mongoose.Schema({
         type:String,
         enum:['pending','approved','rejected'],
         default:'pending'
+    },
+    statusHistory:{
+        type:[{
+            status:{
+                type:String,
+                enum:['pending','approved','rejected'],
+                required:true
+            },
+            changedAt:{
+                type:Date,
+                default:Date.now
+            },
+            changedBy:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:'User'
+            },
+            changedByRole:{
+                type:String
+            }
+        }],
+        default:[]
     }
 },{
     timestamps:true

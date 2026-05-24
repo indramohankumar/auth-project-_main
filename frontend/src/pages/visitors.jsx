@@ -184,10 +184,10 @@ function Visitors() {
     <div className="relative min-h-screen overflow-hidden bg-slate-950">
       {/* Dark background to match Login/Register/Dashboard theme */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-950 to-slate-900" />
-        <div className="absolute -top-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-br from-black via-slate-950 to-slate-900" />
+        <div className="absolute -top-40 left-1/2 h-96 w-240 -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
         <div className="absolute -left-44 top-20 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute -right-52 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -right-52 top-10 h-112 w-112 rounded-full bg-sky-500/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_30%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.65)_70%,rgba(0,0,0,0.92)_100%)]" />
       </div>
 
@@ -248,7 +248,7 @@ function Visitors() {
         {/* Table Card */}
         <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] overflow-x-auto">
           <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-white/[0.04]">
+            <thead className="bg-white/4">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
                   Photo
@@ -333,7 +333,7 @@ function Visitors() {
                     </td>
 
                     <td className="px-4 py-3 text-white/60">
-                      <div className="truncate max-w-[220px]">{visitor.email}</div>
+                      <div className="truncate max-w-55">{visitor.email}</div>
                       <div className="text-xs text-white/40">{visitor.phone}</div>
                     </td>
 

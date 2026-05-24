@@ -1,6 +1,7 @@
 const express=require('express');
 const Appointment=require('../models/appointment');
 const authmiddleware=require('../middleware/authmiddleware');
+const rolemiddleware=require('../middleware/rolemiddleware');
 const router=express.Router();
 //create appointment
 router.post('/',authmiddleware,async(req,res)=>{
@@ -22,7 +23,8 @@ router.get('/',authmiddleware,async(req,res)=>{
     try{
         const appointments=await Appointment.find()
         .populate('visitor')
-        .populate('host',"name email role");
+        .populate('host',"name email role")
+        .populate('statusHistory.changedBy', 'name email role');
         res.status(200).json({
             message:"appointments fetched successfully",
             appointments
@@ -35,17 +37,42 @@ router.get('/',authmiddleware,async(req,res)=>{
     }
 });
 //approve or reject appointment
-router.put('/:id',authmiddleware,async(req,res)=>{
+router.put('/:id',authmiddleware,rolemiddleware('admin'),async(req,res)=>{
     try{
+        const { status } = req.body;
+
+        if (!['approved', 'rejected'].includes(status)) {
+            return res.status(400).json({
+                message: 'invalid appointment status'
+            });
+        }
+
         const appointment=await Appointment.findByIdAndUpdate(
             req.params.id,
             {
-                status:"approved"
+                $set: {
+                    status,
+                },
+                $push: {
+                    statusHistory: {
+                        status,
+                        changedAt: new Date(),
+                        changedBy: req.user.id,
+                        changedByRole: req.user.role,
+                    }
+                }
             },
             {new:true}
         );
+
+        if (!appointment) {
+            return res.status(404).json({
+                message: 'appointment not found'
+            });
+        }
+
             res.status(200).json({
-                message:"appointment approved successfully",
+                message:`appointment ${status} successfully`,
                 appointment
             });
         

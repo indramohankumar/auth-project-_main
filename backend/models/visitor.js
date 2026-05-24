@@ -21,6 +21,9 @@ const visitorschema=new mongoose.Schema({
     host:{
         type:String
     },
+    photoUrl:{
+        type:String
+    },
     checkIn:{
         type:Date
     },

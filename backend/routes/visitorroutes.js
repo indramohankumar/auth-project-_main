@@ -1,15 +1,108 @@
 const express=require('express');
 const multer=require('multer');
+const fs=require('fs');
+const path=require('path');
 const Visitor =require('../models/visitor');
+const Appointment = require('../models/appointment');
 const authmiddleware=require('../middleware/authmiddleware');
 
 const router=express.Router();
-const upload=multer({storage:multer.memoryStorage()});
+
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, uploadsDir),
+    filename: (_req, file, cb) => {
+        const extension = path.extname(file.originalname) || '.jpg';
+        const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extension}`;
+        cb(null, uniqueName);
+    },
+});
+
+const upload=multer({
+    storage,
+    fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Only image files are allowed'));
+        }
+        cb(null, true);
+    },
+});
+
+const buildPhotoUrl = (file) => {
+    if (!file) {
+        return undefined;
+    }
+
+    return `http://localhost:5000/uploads/${file.filename}`;
+};
+
+const removePhotoFile = (photoUrl) => {
+    if (!photoUrl) {
+        return;
+    }
+
+    try {
+        const fileName = path.basename(new URL(photoUrl).pathname);
+        const filePath = path.join(uploadsDir, fileName);
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    } catch (_error) {
+        // Ignore cleanup errors for external or malformed URLs.
+    }
+};
+
+//public register visitor
+router.post('/public-register', upload.single('photo'), async(req,res)=>{
+    try{
+        const visitorData = { ...req.body };
+        const photoUrl = buildPhotoUrl(req.file);
+        if (photoUrl) {
+            visitorData.photoUrl = photoUrl;
+        }
+
+        const visitor = await Visitor.create(visitorData);
+        
+        if(req.body.hostId && req.body.purpose && req.body.visitdate) {
+            await Appointment.create({
+                visitor: visitor._id,
+                host: req.body.hostId,
+                purpose: req.body.purpose,
+                visitdate: new Date(req.body.visitdate),
+                status: 'pending'
+            });
+        }
+
+        res.status(201).json({
+            message:"visitor pre-registered successfully",
+            visitor
+        });
+    }catch(err){
+        res.status(500).json({
+            message:"error pre-registering visitor",
+            error:err.message
+        });
+    }
+});
 
 //create visitor
 router.post('/',authmiddleware,upload.single('photo'),async(req,res)=>{
     try{
-        const visitor=await Visitor.create(req.body);
+        const visitorData = {
+            ...req.body,
+        };
+
+        const photoUrl = buildPhotoUrl(req.file);
+        if (photoUrl) {
+            visitorData.photoUrl = photoUrl;
+        }
+
+        const visitor=await Visitor.create(visitorData);
         res.status(201).json({
             message:"visitor created successfully",
             visitor
@@ -62,9 +155,26 @@ router.get('/:id',authmiddleware,async(req,res)=>{
 //update visitor
 router.put('/:id',authmiddleware,upload.single('photo'),async(req,res)=>{
     try{
+        const existingVisitor = await Visitor.findById(req.params.id);
+        if (!existingVisitor) {
+            return res.status(404).json({
+                message:"visitor not found"
+            });
+        }
+
+        const updateData = {
+            ...req.body,
+        };
+
+        const photoUrl = buildPhotoUrl(req.file);
+        if (photoUrl) {
+            updateData.photoUrl = photoUrl;
+            removePhotoFile(existingVisitor.photoUrl);
+        }
+
         const updatedvisitor=await Visitor.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             {new:true}
         );
         res.status(200).json({
@@ -82,7 +192,8 @@ router.put('/:id',authmiddleware,upload.single('photo'),async(req,res)=>{
 //delete visitor
 router.delete('/:id',authmiddleware,async(req,res)=>{
     try{
-        await Visitor.findByIdAndDelete(req.params.id);
+        const deletedVisitor = await Visitor.findByIdAndDelete(req.params.id);
+        removePhotoFile(deletedVisitor?.photoUrl);
         res.status(200).json({
             message:"visitor deleted successfully"
         });

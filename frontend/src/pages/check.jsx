@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import QRScanner from '../components/QRScanner';
 import { checkIn, checkOut } from '../services/checkService';
 import { Html5Qrcode } from 'html5-qrcode';
+import { AuthContext } from '../context/AuthContext';
 
 export default function CheckPage() {
   const [passID, setPassID] = useState('');
   const [statusMessage, setStatusMessage] = useState(null);
+  const { user } = useContext(AuthContext);
+  const role = user?.role || 'employee';
+  const canManageCheckins = role === 'admin' || role === 'security';
   // scanning state removed (not used) to satisfy linter
 
   const handleCheckIn = async (id = passID) => {
     try {
+      if (!canManageCheckins) {
+        return setStatusMessage({ type: 'error', text: 'You do not have permission to check visitors in.' });
+      }
       if (!id) return alert("Please enter a Pass ID");
       await checkIn(id);
       setStatusMessage({ type: 'success', text: `Successfully checked IN pass: ${id}` });
@@ -22,6 +29,9 @@ export default function CheckPage() {
 
   const handleCheckOut = async (id = passID) => {
     try {
+      if (!canManageCheckins) {
+        return setStatusMessage({ type: 'error', text: 'You do not have permission to check visitors out.' });
+      }
       if (!id) return alert("Please enter a Pass ID");
       await checkOut(id);
       setStatusMessage({ type: 'success', text: `Successfully checked OUT pass: ${id}` });
@@ -72,10 +82,10 @@ export default function CheckPage() {
     <div className="relative min-h-screen overflow-hidden bg-slate-950">
       {/* Same dark background theme (professional + consistent) */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-950 to-slate-900" />
-        <div className="absolute -top-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-br from-black via-slate-950 to-slate-900" />
+        <div className="absolute -top-40 left-1/2 h-96 w-240 -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
         <div className="absolute -left-44 top-20 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute -right-52 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -right-52 top-10 h-112 w-112 rounded-full bg-sky-500/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_30%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.65)_70%,rgba(0,0,0,0.92)_100%)]" />
       </div>
 
@@ -88,7 +98,16 @@ export default function CheckPage() {
           <p className="text-white/55 mt-2">
             Scan a Visitor Pass QR code or enter the Pass ID manually.
           </p>
+          <p className="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
+            {role === 'admin' ? 'Admin access' : 'Frontdesk access'}
+          </p>
         </div>
+
+        {!canManageCheckins && (
+          <div className="mb-6 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+            This page is intended for admin and frontdesk users.
+          </div>
+        )}
 
         {statusMessage && (
           <div
@@ -129,11 +148,11 @@ export default function CheckPage() {
 
             <div className="w-full mt-6">
               <div className="relative flex py-4 items-center">
-                <div className="flex-grow border-t border-white/10"></div>
-                <span className="flex-shrink-0 mx-4 text-white/40 text-xs font-semibold tracking-widest">
+                <div className="grow border-t border-white/10"></div>
+                <span className="shrink-0 mx-4 text-white/40 text-xs font-semibold tracking-widest">
                   OR UPLOAD IMAGE
                 </span>
-                <div className="flex-grow border-t border-white/10"></div>
+                <div className="grow border-t border-white/10"></div>
               </div>
 
               <label className="flex flex-col items-center justify-center w-full h-24 border border-white/10 rounded-2xl cursor-pointer bg-white/5 hover:bg-white/10 transition">
@@ -197,15 +216,19 @@ export default function CheckPage() {
               <div className="flex gap-4 pt-2">
                 <button
                   onClick={() => handleCheckIn(passID)}
+                  disabled={!canManageCheckins}
                   className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4
-                             shadow-sm transition focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
+                             shadow-sm transition focus:outline-none focus:ring-4 focus:ring-emerald-500/20
+                             disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Check In
                 </button>
                 <button
                   onClick={() => handleCheckOut(passID)}
+                  disabled={!canManageCheckins}
                   className="flex-1 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold py-3 px-4
-                             border border-white/10 shadow-sm transition focus:outline-none focus:ring-4 focus:ring-white/10"
+                             border border-white/10 shadow-sm transition focus:outline-none focus:ring-4 focus:ring-white/10
+                             disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Check Out
                 </button>

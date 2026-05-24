@@ -2,15 +2,22 @@ import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useContext(AuthContext);
 
   if (!user) {
-    // If not logged in, redirect to login page
     return <Navigate to="/" replace />;
   }
 
-  // If logged in, render the child components
+  if (Array.isArray(allowedRoles) && allowedRoles.length > 0) {
+    const currentRole = user?.role;
+    const isAllowed = allowedRoles.includes(currentRole);
+
+    if (!isAllowed) {
+      return <Navigate to="/dashboard" replace />;
+    }
+  }
+
   return children;
 };
 

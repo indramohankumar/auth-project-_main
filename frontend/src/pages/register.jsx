@@ -7,7 +7,6 @@ function Register() {
     name: '',
     email: '',
     password: '',
-    role: 'employee',
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +50,7 @@ function Register() {
         formData.name.trim(),
         formData.email.trim(),
         formData.password,
-        formData.role
+        'employee'
       );
 
       // Keep it simple + predictable
@@ -81,10 +80,10 @@ function Register() {
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Dark professional background (same family as Login) */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-neutral-950 to-slate-950" />
-        <div className="absolute -top-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-br from-black via-neutral-950 to-slate-950" />
+        <div className="absolute -top-40 left-1/2 h-96 w-240 -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
         <div className="absolute -left-40 top-24 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute -right-44 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -right-44 top-10 h-112 w-112 rounded-full bg-sky-500/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_35%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.65)_70%,rgba(0,0,0,0.92)_100%)]" />
       </div>
 
@@ -103,7 +102,7 @@ function Register() {
           {/* Card */}
           <div className="mt-8 rounded-3xl border border-white/10 bg-neutral-950 p-8 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.9)]">
             {/* Error area (no layout jump) */}
-            <div className="min-h-[56px]" aria-live="polite" aria-atomic="true">
+            <div className="min-h-14" aria-live="polite" aria-atomic="true">
               {errorMsg ? (
                 <div
                   ref={errorRef}
@@ -200,24 +199,9 @@ function Register() {
                 <p className={helperClass}>Use at least 8 characters.</p>
               </div>
 
-              {/* Role */}
-              <div>
-                <label htmlFor="role" className={labelClass}>
-                  Role
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={inputClass}
-                >
-                  <option value="employee">Employee</option>
-                  <option value="admin">Admin</option>
-                  <option value="secretary">Secretary</option>
-                </select>
-                <p className={helperClass}>Select the role for this account.</p>
+              <div className={helperClass}>
+                New accounts are created as <span className="font-semibold text-white">Employee</span>.
+                Admin or frontdesk accounts should be created by an administrator.
               </div>
 
               {/* Submit */}

@@ -55,12 +55,12 @@ Built using the **MERN Stack**, the application focuses on scalability, security
 
 ---
 
-## 📋 Visitor Registration
+## 📋 Visitor Registration & Self-Service
 
-* Visitor profile creation
-* Photo upload support
-* Contact & identification details
-* Visitor history management
+* **Public Pre-Registration Portal** (No login required)
+* Visitor profile creation with Photo upload support
+* Real-time host selection and purpose tracking
+* Contact & identification details stored securely
 
 ---
 
@@ -75,16 +75,15 @@ Built using the **MERN Stack**, the application focuses on scalability, security
 
 ## 🎟️ Smart Pass Generation
 
-* Dynamic QR code generation
+* Dynamic QR code generation upon host approval
 * PDF badge/pass creation
-* Unique pass identification
-* Downloadable digital passes
+* Unique pass identification numbers (e.g., PASS-171...)
+* **Public Pass Viewing Portal:** Download digital passes instantly
 
 ---
 
 ## 📲 QR-Based Check-In / Check-Out
 
-* Real-time QR scanning
 * Automated attendance logging
 * Entry & exit timestamp recording
 * Secure verification workflow
@@ -95,7 +94,6 @@ Built using the **MERN Stack**, the application focuses on scalability, security
 
 * Email notifications
 * SMS integration support
-* Approval & reminder alerts
 * Visitor status updates
 
 ---
@@ -113,7 +111,6 @@ Built using the **MERN Stack**, the application focuses on scalability, security
 
 ## Frontend
 
-* React.js
 * React Router DOM
 * Axios
 * Tailwind CSS
@@ -134,7 +131,6 @@ Built using the **MERN Stack**, the application focuses on scalability, security
 ## Integrations & Utilities
 
 * QRCode Generator
-* PDFKit
 * Multer
 * Nodemailer
 * Twilio API
@@ -152,7 +148,6 @@ Authentication Layer (JWT)
        ↓
 Business Logic Layer
        ↓
-MongoDB Database
 ```
 
 ---
@@ -160,9 +155,9 @@ MongoDB Database
 # 📂 Project Structure
 
 ```bash id="j7kw6k"
-visitor-pass-management-system/
+authproject/
 │
-├── client/                         # Frontend Application
+├── frontend/                       # Frontend Application
 │   ├── public/
 │   └── src/
 │       ├── components/
@@ -173,7 +168,7 @@ visitor-pass-management-system/
 │       ├── context/
 │       └── utils/
 │
-├── server/                         # Backend Application
+├── backend/                        # Backend Application
 │   ├── config/
 │   ├── controllers/
 │   ├── middleware/
@@ -206,22 +201,29 @@ cd visitor-pass-management-system
 ### Backend
 
 ```bash id="x0jcq0"
-cd server
+cd backend
 npm install
 ```
 
 ### Frontend
 
 ```bash id="6ndfii"
-cd client
+cd frontend
 npm install
+```
+
+### Seed Demo Data
+
+```bash id="seeddemo"
+cd backend
+npm run seed:demo
 ```
 
 ---
 
 # 🔑 Environment Configuration
 
-Create a `.env` file inside the `server/` directory.
+Create a `.env` file inside the `backend/` directory.
 
 ```env id="jgm0k6"
 PORT=5000
@@ -245,15 +247,15 @@ TWILIO_PHONE=your_twilio_phone_number
 ## Start Backend Server
 
 ```bash id="lmr9cn"
-cd server
+cd backend
 npm run dev
 ```
 
 ## Start Frontend Application
 
 ```bash id="h9b42v"
-cd client
-npm start
+cd frontend
+npm run dev
 ```
 
 ---
@@ -286,19 +288,17 @@ Password: employee123
 # 🔄 Application Workflow
 
 ```text id="x4s25q"
-Visitor Registration
+1. Visitor Pre-Registers via Public Portal (/pre-register)
         ↓
-Appointment Request
+2. Employee/Host Approves Appointment from Dashboard
         ↓
-Host Approval Process
+3. QR Pass Generated & Notification Sent
         ↓
-QR Pass Generation
+4. Visitor Downloads PDF Pass via Public Portal (/view-pass)
         ↓
-Security Verification
+5. Security Staff Scans Pass at Frontdesk
         ↓
-Check-In Logging
-        ↓
-Check-Out Completion
+6. Check-In / Check-Out Logged Automatically
 ```
 
 ---

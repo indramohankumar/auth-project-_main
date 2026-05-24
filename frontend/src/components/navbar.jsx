@@ -7,6 +7,14 @@ function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const role = user?.role;
+
+    const canAccess = (allowedRoles) => {
+        if (!role) return false;
+        if (!Array.isArray(allowedRoles) || allowedRoles.length === 0) return true;
+        return allowedRoles.includes(role);
+    };
+
     const handleLogout = () => {
         logout();
         navigate("/");
@@ -166,10 +174,23 @@ function Navbar() {
                         <>
                             <div className="vp-links">
                                 <Link to="/dashboard"    className={`vp-link${isActive("/dashboard")    ? " vp-link-active" : ""}`}>Dashboard</Link>
-                                <Link to="/visitors"     className={`vp-link${isActive("/visitors")     ? " vp-link-active" : ""}`}>Visitors</Link>
-                                <Link to="/appointments" className={`vp-link${isActive("/appointments") ? " vp-link-active" : ""}`}>Appointments</Link>
-                                <Link to="/check"        className={`vp-link${isActive("/check")        ? " vp-link-active" : ""}`}>Check In/Out</Link>
+                                {canAccess(["admin", "security"]) && (
+                                    <Link to="/visitors" className={`vp-link${isActive("/visitors") ? " vp-link-active" : ""}`}>Visitors</Link>
+                                )}
+                                {canAccess(["admin", "employee"]) && (
+                                    <Link to="/appointments" className={`vp-link${isActive("/appointments") ? " vp-link-active" : ""}`}>Appointments</Link>
+                                )}
+                                {canAccess(["admin", "security"]) && (
+                                    <Link to="/check" className={`vp-link${isActive("/check") ? " vp-link-active" : ""}`}>Check In/Out</Link>
+                                )}
+                                {canAccess(["admin"]) && (
+                                    <Link to="/users" className={`vp-link${isActive("/users") ? " vp-link-active" : ""}`}>Users</Link>
+                                )}
                             </div>
+
+                            <span className="vp-link" title={role || "user"}>
+                                {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}
+                            </span>
 
                             <button className="vp-logout" onClick={handleLogout}>
                                 Logout

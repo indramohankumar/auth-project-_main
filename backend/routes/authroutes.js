@@ -4,9 +4,42 @@ const bcryptjs = require('bcryptjs');
 const User=require('../models/user');
 const router=express.Router();
 const jwt=require('jsonwebtoken');
+const authmiddleware=require('../middleware/authmiddleware');
+
+const stripPassword = (user) => {
+    if (!user) {
+        return user;
+    }
+
+    const safeUser = typeof user.toObject === 'function' ? user.toObject() : { ...user };
+    delete safeUser.password;
+    return safeUser;
+};
+
+router.get('/me', authmiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'user not found'
+            });
+        }
+
+        res.status(200).json({
+            user: stripPassword(user)
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: 'error loading user profile',
+            error: err.message
+        });
+    }
+});
+
 router.post('/register',async(req, res)=>{
     try{
-        const {name,email,password,role}=req.body;
+        const {name,email,password}=req.body;
         //check existing user
         const existinguser=await User.findOne({email});
         if(existinguser){
@@ -21,13 +54,13 @@ router.post('/register',async(req, res)=>{
             name,
             email,
             password:hashedpassword,
-            role
+            role:"employee"
 
         });
         await newuser.save();
         res.status(201).json({
             message:"user registered successfully",
-            user:newuser
+            user:stripPassword(newuser)
         });
     } catch(err){
         res.status(500).json({
@@ -67,7 +100,7 @@ router.post('/login',async(req,res)=>{
         res.status(200).json({
             message:"login successful",
             token,
-            user: foundUser
+            user: stripPassword(foundUser)
         });
 
     }

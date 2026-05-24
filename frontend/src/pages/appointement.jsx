@@ -3,6 +3,7 @@ import {
   getAppointments,
   createAppointment,
   approveAppointment,
+  rejectAppointment,
 } from "../services/appointmentService";
 import { generatePass } from "../services/passService";
 import { getVisitors } from "../services/visitorService";
@@ -20,6 +21,11 @@ function Appointment() {
   const [actionId, setActionId] = useState(null); // which row is doing approve/generate (simple UX)
 
   const { user } = useContext(AuthContext);
+  const role = user?.role || "employee";
+
+  const canCreateAppointment = role === "admin" || role === "employee";
+  const canApproveAppointment = role === "admin";
+  const canGeneratePass = role === "admin";
 
   const [formData, setFormData] = useState({
     visitor: "",
@@ -72,6 +78,11 @@ function Appointment() {
     e.preventDefault();
     if (submitting) return;
 
+    if (!canCreateAppointment) {
+      alert("You do not have permission to create appointments.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       await createAppointment({
@@ -90,6 +101,10 @@ function Appointment() {
 
   const handleApprove = async (id) => {
     if (!id) return;
+    if (!canApproveAppointment) {
+      alert("Only admins can approve appointments.");
+      return;
+    }
     setActionId(id);
     try {
       await approveAppointment(id);
@@ -102,8 +117,30 @@ function Appointment() {
     }
   };
 
+  const handleReject = async (id) => {
+    if (!id) return;
+    if (!canApproveAppointment) {
+      alert("Only admins can reject appointments.");
+      return;
+    }
+    setActionId(id);
+    try {
+      await rejectAppointment(id);
+      fetchAppointments();
+    } catch (error) {
+      console.error("Failed to reject:", error);
+      alert(error.response?.data?.message || "Failed to reject appointment");
+    } finally {
+      setActionId(null);
+    }
+  };
+
   const handleGeneratePass = async (id) => {
     if (!id) return;
+    if (!canGeneratePass) {
+      alert("Only admins can generate visitor passes from this screen.");
+      return;
+    }
     setActionId(id);
     try {
       const data = await generatePass(id);
@@ -148,14 +185,30 @@ function Appointment() {
     }
   };
 
+  const getLatestStatusChange = (appt) => {
+    const latestChange = appt.statusHistory?.[appt.statusHistory.length - 1];
+    if (!latestChange) return null;
+
+    const changedAt = latestChange.changedAt
+      ? new Date(latestChange.changedAt).toLocaleString(undefined, {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "Unknown time";
+
+    return `${latestChange.status} • ${changedAt}${latestChange.changedByRole ? ` • ${latestChange.changedByRole}` : ""}`;
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950">
       {/* Background (same theme, slightly refined for depth) */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-950 to-slate-900" />
-        <div className="absolute -top-44 left-1/2 h-[26rem] w-[62rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-br from-black via-slate-950 to-slate-900" />
+        <div className="absolute -top-44 left-1/2 h-104 w-248 -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
         <div className="absolute -left-48 top-24 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute -right-56 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -right-56 top-10 h-112 w-112 rounded-full bg-sky-500/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_30%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.65)_70%,rgba(0,0,0,0.92)_100%)]" />
       </div>
 
@@ -214,14 +267,31 @@ function Appointment() {
               Refresh
             </button>
 
-            <button
-              onClick={() => setShowModal(true)}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black
-                         shadow-sm hover:bg-white/90 focus:outline-none focus:ring-4 focus:ring-white/20"
-            >
-              + Schedule Appointment
-            </button>
+            {canCreateAppointment ? (
+              <button
+                onClick={() => setShowModal(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black
+                           shadow-sm hover:bg-white/90 focus:outline-none focus:ring-4 focus:ring-white/20"
+              >
+                + Schedule Appointment
+              </button>
+            ) : (
+              <span className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white/50">
+                Scheduling disabled for your role
+              </span>
+            )}
           </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur px-5 py-4 shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)]">
+          <p className="text-xs font-semibold tracking-widest text-white/45 uppercase">
+            Appointment access
+          </p>
+          <p className="mt-2 text-sm text-white/60">
+            {role === "admin"
+              ? "You can create appointments, approve requests, and generate passes."
+              : "You can create appointments only. Approval and pass issuance are reserved for admins."}
+          </p>
         </div>
 
         {/* Table card */}
@@ -244,7 +314,7 @@ function Appointment() {
 
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-white/10">
-              <thead className="bg-white/[0.04]">
+              <thead className="bg-white/4">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
                     Visitor
@@ -323,24 +393,42 @@ function Appointment() {
                           <span className="h-1.5 w-1.5 rounded-full bg-current opacity-60" />
                           {appt.status}
                         </span>
+                        {getLatestStatusChange(appt) ? (
+                          <div className="mt-1 text-[11px] text-white/40">
+                            Updated: {getLatestStatusChange(appt)}
+                          </div>
+                        ) : null}
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center gap-3">
-                          {appt.status === "pending" && (
-                            <button
-                              onClick={() => handleApprove(appt._id)}
-                              disabled={actionId === appt._id}
-                              className="rounded-lg px-3 py-1.5 text-xs font-semibold
-                                         bg-indigo-500/15 text-indigo-200 border border-indigo-500/20
-                                         hover:bg-indigo-500/20 transition
-                                         disabled:opacity-60 disabled:cursor-not-allowed"
-                            >
-                              {actionId === appt._id ? "Approving…" : "Approve"}
-                            </button>
+                          {appt.status === "pending" && canApproveAppointment && (
+                            <>
+                              <button
+                                onClick={() => handleApprove(appt._id)}
+                                disabled={actionId === appt._id}
+                                className="rounded-lg px-3 py-1.5 text-xs font-semibold
+                                           bg-indigo-500/15 text-indigo-200 border border-indigo-500/20
+                                           hover:bg-indigo-500/20 transition
+                                           disabled:opacity-60 disabled:cursor-not-allowed"
+                              >
+                                {actionId === appt._id ? "Approving…" : "Approve"}
+                              </button>
+
+                              <button
+                                onClick={() => handleReject(appt._id)}
+                                disabled={actionId === appt._id}
+                                className="rounded-lg px-3 py-1.5 text-xs font-semibold
+                                           bg-rose-500/15 text-rose-200 border border-rose-500/20
+                                           hover:bg-rose-500/20 transition
+                                           disabled:opacity-60 disabled:cursor-not-allowed"
+                              >
+                                {actionId === appt._id ? "Rejecting…" : "Reject"}
+                              </button>
+                            </>
                           )}
 
-                          {appt.status === "approved" && (
+                          {appt.status === "approved" && canGeneratePass && (
                             <button
                               onClick={() => handleGeneratePass(appt._id)}
                               disabled={actionId === appt._id}
@@ -354,7 +442,9 @@ function Appointment() {
                           )}
 
                           {/* keep layout stable when no actions */}
-                          {appt.status !== "pending" && appt.status !== "approved" ? (
+                          {((appt.status === "pending" && !canApproveAppointment) ||
+                            (appt.status === "approved" && !canGeneratePass) ||
+                            (appt.status !== "pending" && appt.status !== "approved")) ? (
                             <span className="text-xs text-white/35">—</span>
                           ) : null}
                         </div>
@@ -422,7 +512,7 @@ function Appointment() {
         )}
 
         {/* Schedule Appointment Modal */}
-        {showModal && (
+        {showModal && canCreateAppointment && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div className="w-full max-w-md rounded-3xl border border-white/10 bg-neutral-950 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.95)]">
               <div className="p-7">

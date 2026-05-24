@@ -13,7 +13,7 @@ function Login() {
   const [capsLockOn, setCapsLockOn] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const { login } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const emailRef = useRef(null);
@@ -24,6 +24,18 @@ function Login() {
     // Nice UX: focus email on first paint
     emailRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (!user?.role) return;
+
+    const roleHome = {
+      admin: '/dashboard',
+      employee: '/appointments',
+      security: '/visitors',
+    };
+
+    navigate(roleHome[user.role] || '/dashboard', { replace: true });
+  }, [user, navigate]);
 
   const canSubmit = useMemo(() => {
     return email.trim().length > 0 && password.trim().length > 0 && !submitting;
@@ -43,8 +55,15 @@ function Login() {
     setSubmitting(true);
 
     try {
-      await login(email.trim(), password);
-      navigate('/dashboard');
+      const response = await login(email.trim(), password);
+
+      const roleHome = {
+        admin: '/dashboard',
+        employee: '/appointments',
+        security: '/visitors',
+      };
+
+      navigate(roleHome[response?.user?.role] || '/dashboard');
     } catch (err) {
       console.error(err);
 
@@ -82,14 +101,14 @@ function Login() {
       {/* Dark professional background (no extra UX features) */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* Base */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-neutral-950 to-slate-950" />
+        <div className="absolute inset-0 bg-linear-to-br from-black via-neutral-950 to-slate-950" />
 
         {/* Very subtle top highlight */}
-        <div className="absolute -top-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -top-40 left-1/2 h-96 w-240 -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
 
         {/* Subtle side glows (kept minimal / pro) */}
         <div className="absolute -left-40 top-24 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute -right-44 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -right-44 top-10 h-112 w-112 rounded-full bg-sky-500/10 blur-3xl" />
 
         {/* Soft vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_35%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.65)_70%,rgba(0,0,0,0.92)_100%)]" />
@@ -99,7 +118,7 @@ function Login() {
         <div className="grid w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-neutral-950 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.9)] lg:grid-cols-2">
           {/* Left: Brand panel */}
           <div className="hidden lg:block">
-            <div className="relative h-full bg-gradient-to-br from-neutral-950 via-slate-950 to-indigo-950 p-10 text-white">
+            <div className="relative h-full bg-linear-to-br from-neutral-950 via-slate-950 to-indigo-950 p-10 text-white">
               <div className="flex items-center gap-3">
                 <div className="grid h-11 w-11 place-items-center rounded-xl bg-white/10 ring-1 ring-white/15">
                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
@@ -142,7 +161,7 @@ function Login() {
                 </div>
               </div>
 
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-linear-to-b from-transparent via-white/10 to-transparent" />
             </div>
           </div>
 
@@ -160,7 +179,7 @@ function Login() {
             </div>
 
             {/* Error area: accessible + no layout jump */}
-            <div className="mt-6 min-h-[56px]" aria-live="polite" aria-atomic="true">
+            <div className="mt-6 min-h-14" aria-live="polite" aria-atomic="true">
               {errorMsg ? (
                 <div
                   ref={errorRef}

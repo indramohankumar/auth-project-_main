@@ -11,6 +11,11 @@ export const createAppointment = async (appointmentData) => {
 };
 
 export const approveAppointment = async (id) => {
-    const response = await API.put(`/appointment/${id}`);
+    const response = await API.put(`/appointment/${id}`, { status: 'approved' });
+    return response.data;
+};
+
+export const rejectAppointment = async (id) => {
+    const response = await API.put(`/appointment/${id}`, { status: 'rejected' });
     return response.data;
 };
