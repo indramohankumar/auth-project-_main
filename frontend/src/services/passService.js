@@ -6,5 +6,6 @@ export const generatePass = async (appointmentId) => {
 };
 
 export const getPassPdfUrl = (passId) => {
-    return `http://localhost:5000/api/passes/pdf/${passId}`;
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    return `${baseUrl}/passes/pdf/${passId}`;
 };

@@ -37,7 +37,8 @@ const buildPhotoUrl = (file) => {
         return undefined;
     }
 
-    return `http://localhost:5000/uploads/${file.filename}`;
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+    return `${backendUrl}/uploads/${file.filename}`;
 };
 
 const removePhotoFile = (photoUrl) => {

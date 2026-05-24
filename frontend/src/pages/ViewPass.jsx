@@ -13,7 +13,8 @@ function ViewPass() {
 
     try {
       // Direct window location change to trigger a download/view since it's a PDF response
-      window.location.href = `http://localhost:5000/api/passes/public/pdf/${passnumber.trim()}`;
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      window.location.href = `${baseUrl}/passes/public/pdf/${passnumber.trim()}`;
       
       // Note: A more robust implementation might fetch it as a blob first to handle 404s gracefully
       // but this works for standard PDF viewing
