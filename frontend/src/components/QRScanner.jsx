@@ -3,6 +3,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 
 function QRScanner({ onScan, elementId = 'qr-reader' }) {
   const onScanRef = useRef(onScan);
+  const scannerRef = useRef(null);
 
   // Keep the ref updated with the latest onScan function without triggering re-renders
   useEffect(() => {
@@ -10,37 +11,43 @@ function QRScanner({ onScan, elementId = 'qr-reader' }) {
   }, [onScan]);
 
   useEffect(() => {
-    const config = { fps: 10, qrbox: 250 };
-    const verbose = false;
-    const scanner = new Html5QrcodeScanner(elementId, config, verbose);
-
-    scanner.render(
-      (decodedText) => {
-        if (onScanRef.current) {
-          onScanRef.current(decodedText);
+    // Only initialize if not already initialized (protects against React StrictMode double mount)
+    if (!scannerRef.current) {
+      const config = { 
+        fps: 10, 
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+        disableFlip: false 
+      };
+      
+      scannerRef.current = new Html5QrcodeScanner(elementId, config, false);
+      
+      scannerRef.current.render(
+        (decodedText) => {
+          if (onScanRef.current) {
+            onScanRef.current(decodedText);
+          }
+          // Note: We no longer clear the scanner automatically here.
+          // This allows users to scan multiple codes or prevents crashes if clear() is called while scanning.
+        },
+        (error) => {
+          // Ignore general scan errors (e.g. no code found in frame)
         }
-        // stop/clear after a successful scan
-        try {
-          scanner.clear().catch(() => {});
-        } catch {
-          // ignore
-        }
-      },
-      () => {
-        // optional error callback - ignore or log
-      },
-    );
+      );
+    }
 
     return () => {
-      try {
-        scanner.clear().catch(() => {});
-      } catch {
-        // ignore
+      // Cleanup on unmount
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(err => {
+          console.error("Failed to clear html5QrcodeScanner. ", err);
+        });
+        scannerRef.current = null;
       }
     };
-  }, [elementId]); // Only re-run if elementId changes, NOT when onScan changes
+  }, [elementId]);
 
-  return <div id={elementId} style={{ width: '100%' }} />;
+  return <div id={elementId} style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }} />;
 }
 
 export default QRScanner;
