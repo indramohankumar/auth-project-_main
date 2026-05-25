@@ -156,6 +156,9 @@ router.get('/:id',authmiddleware,async(req,res)=>{
 //update visitor
 router.put('/:id',authmiddleware,upload.single('photo'),async(req,res)=>{
     try{
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: "only admin can edit visitors" });
+        }
         const existingVisitor = await Visitor.findById(req.params.id);
         if (!existingVisitor) {
             return res.status(404).json({
@@ -193,6 +196,9 @@ router.put('/:id',authmiddleware,upload.single('photo'),async(req,res)=>{
 //delete visitor
 router.delete('/:id',authmiddleware,async(req,res)=>{
     try{
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: "only admin can delete visitors" });
+        }
         const deletedVisitor = await Visitor.findByIdAndDelete(req.params.id);
         removePhotoFile(deletedVisitor?.photoUrl);
         res.status(200).json({

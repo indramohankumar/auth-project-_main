@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useContext } from "react";
+import AuthContext from "../context/authcontext";
 import {
   getVisitors,
   createVisitor,
@@ -18,6 +19,8 @@ const EMPTY_FORM = {
 };
 
 function Visitors() {
+  const { user } = useContext(AuthContext);
+  const role = user?.role || "user";
   const [visitors, setVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -67,6 +70,10 @@ function Visitors() {
   };
 
   const openEditModal = (visitor) => {
+    if (role !== "admin") {
+      toast.error("Only admins can edit visitors.");
+      return;
+    }
     setEditVisitor(visitor);
     setFormData({
       name: visitor.name || "",
@@ -142,6 +149,10 @@ function Visitors() {
   };
 
   const handleDelete = async (id) => {
+    if (role !== "admin") {
+      toast.error("Only admins can delete visitors.");
+      return;
+    }
     if (!window.confirm("Are you sure you want to delete this visitor?")) return;
     try {
       await deleteVisitor(id);
@@ -345,24 +356,26 @@ function Visitors() {
                     </td>
 
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => openEditModal(visitor)}
-                          className="text-xs font-semibold rounded-lg px-3 py-1.5
-                                     bg-amber-500/15 text-amber-200 border border-amber-500/20
-                                     hover:bg-amber-500/20 transition"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(visitor._id)}
-                          className="text-xs font-semibold rounded-lg px-3 py-1.5
-                                     bg-rose-500/15 text-rose-200 border border-rose-500/20
-                                     hover:bg-rose-500/20 transition"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                      {role === "admin" && (
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => openEditModal(visitor)}
+                            className="text-xs font-semibold rounded-lg px-3 py-1.5
+                                       bg-amber-500/15 text-amber-200 border border-amber-500/20
+                                       hover:bg-amber-500/20 transition"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(visitor._id)}
+                            className="text-xs font-semibold rounded-lg px-3 py-1.5
+                                       bg-rose-500/15 text-rose-200 border border-rose-500/20
+                                       hover:bg-rose-500/20 transition"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
