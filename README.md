@@ -351,13 +351,25 @@ Notifications
 
 # 📸 Application Screenshots
 
-| Module               | Preview        |
-| -------------------- | -------------- |
-| Authentication Page  | Add Screenshot |
-| Admin Dashboard      | Add Screenshot |
-| Visitor Registration | Add Screenshot |
-| QR Pass System       | Add Screenshot |
-| Analytics Dashboard  | Add Screenshot |
+*(Upload your screenshots to a GitHub issue and paste the URLs below to display them!)*
+
+### 1. Authentication / Sign In
+`![Sign In Page](URL_HERE)`
+
+### 2. Admin Dashboard
+`![Dashboard](URL_HERE)`
+
+### 3. Public Pre-Registration
+`![Pre-Registration](URL_HERE)`
+
+### 4. User / Visitor Management
+`![Directory](URL_HERE)`
+
+### 5. Check In & QR Scanner
+`![Check In Out](URL_HERE)`
+
+### 6. Digital Pass (QR Code)
+`![Digital Pass](URL_HERE)`
 
 ---
 
