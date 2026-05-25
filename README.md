@@ -1,3 +1,11 @@
+<img width="783" height="776" alt="Screenshot 2026-05-25 090017" src="https://github.com/user-attachments/assets/b10e60d4-c1b5-4793-85cf-75b6054f9cfe" />
+<img width="1419" height="785" alt="Screenshot 2026-05-25 085958" src="https://github.com/user-attachments/assets/0d67acc8-df13-4ba9-9d41-15d01fddb950" />
+<img width="1419" height="785" alt="Screenshot 2026-05-25 085958" src="https://github.com/user-attachments/assets/082740d4-7d91-45ff-8774-8b3b85663225" />
+<img width="1419" height="785" alt="Screenshot 2026-05-25 085958" src="https://github.com/user-attachments/assets/48f2a0d5-b2ac-41a6-a12d-ce317263c759" />
+<img width="1513" height="852" alt="Screenshot 2026-05-25 085553" src="https://github.com/user-attachments/assets/b1ad532a-f4ad-47a8-878c-0d4c225321de" />
+<img width="674" height="806" alt="Screenshot 2026-05-25 090346" src="https://github.com/user-attachments/assets/92ae58bf-4d98-49fe-964f-441aa2c958b6" />
+<img width="1836" height="863" alt="Screenshot 2026-05-25 085541" src="https://github.com/user-attachments/assets/cac786ba-91e5-4b3c-a639-402a15b1bb51" />
+<img width="1280" height="783" alt="Screenshot 2026-05-24 115744" src="https://github.com/user-attachments/assets/1be42213-4827-4c8b-baf0-b502f179467d" />
 # 🚪 Visitor Pass Management System (VPMS)
 
 <div align="center">
