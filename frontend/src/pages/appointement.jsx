@@ -25,7 +25,7 @@ function Appointment() {
   const role = user?.role || "employee";
 
   const canCreateAppointment = role === "admin" || role === "employee" || role === "security";
-  const canApproveAppointment = role === "admin" || role === "employee";
+  const canApproveAppointment = role === "admin";
   const canGeneratePass = role === "admin" || role === "security";
 
   const [formData, setFormData] = useState({
@@ -102,8 +102,8 @@ function Appointment() {
 
   const handleApprove = async (id, hostId) => {
     if (!id) return;
-    if (role !== "admin" && user?._id !== hostId && user?.id !== hostId) {
-      alert("Only admins or the specific host can approve this appointment.");
+    if (role !== "admin") {
+      alert("Only admins can approve this appointment.");
       return;
     }
     setActionId(id);
@@ -310,7 +310,7 @@ function Appointment() {
           </p>
           <p className="mt-2 text-sm text-white/60">
             {role === "admin" && "You can create appointments, approve requests, and generate passes."}
-            {role === "employee" && "You can create appointments and approve requests where you are the host."}
+            {role === "employee" && "You can create appointments and view your visitors."}
             {role === "security" && "You can create appointments and generate passes for approved visits."}
           </p>
         </div>

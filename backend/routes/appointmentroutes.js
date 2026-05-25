@@ -54,10 +54,10 @@ router.put('/:id',authmiddleware,async(req,res)=>{
             });
         }
 
-        // Only Admin or the Host of the appointment can approve/reject it
-        if (req.user.role !== 'admin' && req.user.id !== appointmentToUpdate.host.toString()) {
+        // Only Admin can approve/reject it
+        if (req.user.role !== 'admin') {
             return res.status(403).json({
-                message: 'not authorized to approve or reject this appointment'
+                message: 'only admin is authorized to approve or reject appointments'
             });
         }
 

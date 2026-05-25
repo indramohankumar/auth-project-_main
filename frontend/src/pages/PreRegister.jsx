@@ -54,9 +54,7 @@ function PreRegister() {
         data.append('photo', photo);
       }
 
-      const response = await api.post('/visitors/public-register', data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response = await api.post('/visitors/public-register', data);
 
       setMessage('Pre-registration successful! Your host will approve your visit.');
       setFormData({
