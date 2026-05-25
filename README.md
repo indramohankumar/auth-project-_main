@@ -362,34 +362,40 @@ Notifications
 *(Upload your screenshots to a GitHub issue and paste the URLs below to display them!)*
 
 ### 1. Authentication / Sign In
-> *Paste your image URL here:*
-> 
-> ![Sign In Page](URL_HERE)
+<p align="center">
+  <img src="./screenshots/signin.png" width="800" alt="Sign In Page" />
+</p>
 
 ### 2. Admin Dashboard
-> *Paste your image URL here:*
-> 
-> ![Dashboard](URL_HERE)
+<p align="center">
+  <img src="./screenshots/dashboard.png" width="800" alt="Dashboard" />
+</p>
 
 ### 3. Public Pre-Registration
-> *Paste your image URL here:*
-> 
-> ![Pre-Registration](URL_HERE)
+<p align="center">
+  <img src="./screenshots/preregister.png" width="800" alt="Pre-Registration" />
+</p>
 
 ### 4. User / Visitor Management
-> *Paste your image URL here:*
-> 
-> ![Directory](URL_HERE)
+<p align="center">
+  <img src="./screenshots/visitors.png" width="800" alt="Visitors Directory" />
+</p>
+<p align="center">
+  <img src="./screenshots/appointments.png" width="800" alt="Appointments List" />
+</p>
+<p align="center">
+  <img src="./screenshots/users.png" width="800" alt="User Management" />
+</p>
 
 ### 5. Check In & QR Scanner
-> *Paste your image URL here:*
-> 
-> ![Check In Out](URL_HERE)
+<p align="center">
+  <img src="./screenshots/checkin.png" width="800" alt="Check In Out Scanner" />
+</p>
 
 ### 6. Digital Pass (QR Code)
-> *Paste your image URL here:*
-> 
-> ![Digital Pass](URL_HERE)
+<p align="center">
+  <img src="./screenshots/pass.png" width="800" alt="Digital Pass QR" />
+</p>
 
 ---
 
