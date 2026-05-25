@@ -4,6 +4,7 @@ import {
   createAppointment,
   approveAppointment,
   rejectAppointment,
+  deleteAppointment,
 } from "../services/appointmentService";
 import { generatePass } from "../services/passService";
 import { getVisitors } from "../services/visitorService";
@@ -130,6 +131,26 @@ function Appointment() {
     } catch (error) {
       console.error("Failed to reject:", error);
       alert(error.response?.data?.message || "Failed to reject appointment");
+    } finally {
+      setActionId(null);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!id) return;
+    if (role !== "admin") {
+      alert("Only admins can delete appointments.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to permanently delete this appointment?")) return;
+    
+    setActionId(id);
+    try {
+      await deleteAppointment(id);
+      fetchAppointments();
+    } catch (error) {
+      console.error("Failed to delete:", error);
+      alert(error.response?.data?.message || "Failed to delete appointment");
     } finally {
       setActionId(null);
     }
@@ -441,10 +462,21 @@ function Appointment() {
                             </button>
                           )}
 
+                          {role === "admin" && (
+                            <button
+                              onClick={() => handleDelete(appt._id)}
+                              disabled={actionId === appt._id}
+                              className="rounded-lg px-2 py-1.5 text-xs font-semibold text-rose-300 hover:text-rose-200 hover:bg-rose-500/10 transition"
+                              title="Delete Appointment"
+                            >
+                              ✕ Delete
+                            </button>
+                          )}
+
                           {/* keep layout stable when no actions */}
                           {((appt.status === "pending" && !canApproveAppointment) ||
                             (appt.status === "approved" && !canGeneratePass) ||
-                            (appt.status !== "pending" && appt.status !== "approved")) ? (
+                            (appt.status !== "pending" && appt.status !== "approved" && role !== "admin")) ? (
                             <span className="text-xs text-white/35">—</span>
                           ) : null}
                         </div>

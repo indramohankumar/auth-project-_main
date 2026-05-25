@@ -84,4 +84,24 @@ router.put('/:id',authmiddleware,rolemiddleware('admin'),async(req,res)=>{
     }
 });
 
-module.exports=router;
+//delete appointment
+router.delete('/:id', authmiddleware, rolemiddleware('admin'), async (req, res) => {
+    try {
+        const appointment = await Appointment.findByIdAndDelete(req.params.id);
+        if (!appointment) {
+            return res.status(404).json({
+                message: "appointment not found"
+            });
+        }
+        res.status(200).json({
+            message: "appointment deleted successfully"
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "error deleting appointment",
+            error: err.message
+        });
+    }
+});
+
+module.exports = router;

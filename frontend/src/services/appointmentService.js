@@ -19,3 +19,8 @@ export const rejectAppointment = async (id) => {
     const response = await API.put(`/appointment/${id}`, { status: 'rejected' });
     return response.data;
 };
+
+export const deleteAppointment = async (id) => {
+    const response = await API.delete(`/appointment/${id}`);
+    return response.data;
+};
