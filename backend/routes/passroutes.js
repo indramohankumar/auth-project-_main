@@ -27,12 +27,13 @@ router.post('/:appointmentid',authmiddleware,async(req,res)=>{
         }
         //create unique pass number
         const passnumber=`PASS-${Date.now()}`;
-        //qr data
+        //qr data - DO NOT include the full visitor object (especially if it contains a large base64 photo)
+        // Keep the payload small so the QR code generates instantly and is easy to scan.
         const qrdata=JSON.stringify({
             passnumber,
-            visitor:foundAppointment.visitor,
-        
-    });     //generate qr code
+            name: foundAppointment.visitor.name,
+            email: foundAppointment.visitor.email
+        });     //generate qr code
     const qrCodeUrl=await qrcode.toDataURL(qrdata);
     //create pass
     const createdPass=await Pass.create({
@@ -42,15 +43,17 @@ router.post('/:appointmentid',authmiddleware,async(req,res)=>{
         passnumber,
         validtill:new Date(Date.now()+24*60*60*1000) //valid for 24 hours
     });
-    await sendEmail(
+    // Send notifications in the background (no await) so it doesn't block pass generation
+    sendEmail(
         foundAppointment.visitor.email,
         "visitor pass generated",
         `your visitor pass ${createdPass.passnumber} has been generated successfully`
-    );
-        // send SMS if phone available
-        if (foundAppointment.visitor.phone) {
-            await sendSms(foundAppointment.visitor.phone, `Your visitor pass ${createdPass.passnumber} is ready.`);
-        }
+    ).catch(console.error);
+
+    // send SMS if phone available
+    if (foundAppointment.visitor.phone) {
+        sendSms(foundAppointment.visitor.phone, `Your visitor pass ${createdPass.passnumber} is ready.`).catch(console.error);
+    }
     res.status(201).json({
         message:"pass created successfully",
         pass:createdPass
