@@ -362,22 +362,34 @@ Notifications
 *(Upload your screenshots to a GitHub issue and paste the URLs below to display them!)*
 
 ### 1. Authentication / Sign In
-`![Sign In Page](URL_HERE)`
+> *Paste your image URL here:*
+> 
+> ![Sign In Page](URL_HERE)
 
 ### 2. Admin Dashboard
-`![Dashboard](URL_HERE)`
+> *Paste your image URL here:*
+> 
+> ![Dashboard](URL_HERE)
 
 ### 3. Public Pre-Registration
-`![Pre-Registration](URL_HERE)`
+> *Paste your image URL here:*
+> 
+> ![Pre-Registration](URL_HERE)
 
 ### 4. User / Visitor Management
-`![Directory](URL_HERE)`
+> *Paste your image URL here:*
+> 
+> ![Directory](URL_HERE)
 
 ### 5. Check In & QR Scanner
-`![Check In Out](URL_HERE)`
+> *Paste your image URL here:*
+> 
+> ![Check In Out](URL_HERE)
 
 ### 6. Digital Pass (QR Code)
-`![Digital Pass](URL_HERE)`
+> *Paste your image URL here:*
+> 
+> ![Digital Pass](URL_HERE)
 
 ---
 
