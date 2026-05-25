@@ -24,7 +24,7 @@ function App() {
           <Route path="/pre-register" element={<PreRegister />} />
           <Route path="/view-pass" element={<ViewPass />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/visitors" element={<ProtectedRoute allowedRoles={["admin", "security"]}><Visitors /></ProtectedRoute>} />
+          <Route path="/visitors" element={<ProtectedRoute allowedRoles={["admin", "security", "employee"]}><Visitors /></ProtectedRoute>} />
           <Route path="/appointments" element={<ProtectedRoute allowedRoles={["admin", "employee"]}><Appointment /></ProtectedRoute>} />
           <Route path="/check" element={<ProtectedRoute allowedRoles={["admin", "security"]}><Check /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute allowedRoles={["admin"]}><Users /></ProtectedRoute>} />

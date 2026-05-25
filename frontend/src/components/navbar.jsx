@@ -271,7 +271,7 @@ function Navbar() {
                             <div className="vp-desktop-menu">
                                 <div className="vp-links">
                                     <Link to="/dashboard"    className={`vp-link${isActive("/dashboard")    ? " vp-link-active" : ""}`}>Dashboard</Link>
-                                    {canAccess(["admin", "security"]) && (
+                                    {canAccess(["admin", "security", "employee"]) && (
                                         <Link to="/visitors" className={`vp-link${isActive("/visitors") ? " vp-link-active" : ""}`}>Visitors</Link>
                                     )}
                                     {canAccess(["admin", "employee"]) && (
@@ -301,7 +301,7 @@ function Navbar() {
                                 </div>
                                 
                                 <Link to="/dashboard" onClick={closeMenu} className={`vp-link${isActive("/dashboard") ? " vp-link-active" : ""}`}>Dashboard</Link>
-                                {canAccess(["admin", "security"]) && (
+                                {canAccess(["admin", "security", "employee"]) && (
                                     <Link to="/visitors" onClick={closeMenu} className={`vp-link${isActive("/visitors") ? " vp-link-active" : ""}`}>Visitors</Link>
                                 )}
                                 {canAccess(["admin", "employee"]) && (
