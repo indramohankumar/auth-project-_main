@@ -37,13 +37,27 @@ router.get('/',authmiddleware,async(req,res)=>{
     }
 });
 //approve or reject appointment
-router.put('/:id',authmiddleware,rolemiddleware('admin'),async(req,res)=>{
+router.put('/:id',authmiddleware,async(req,res)=>{
     try{
         const { status } = req.body;
 
         if (!['approved', 'rejected'].includes(status)) {
             return res.status(400).json({
                 message: 'invalid appointment status'
+            });
+        }
+
+        const appointmentToUpdate = await Appointment.findById(req.params.id);
+        if (!appointmentToUpdate) {
+            return res.status(404).json({
+                message: 'appointment not found'
+            });
+        }
+
+        // Only Admin or the Host of the appointment can approve/reject it
+        if (req.user.role !== 'admin' && req.user.id !== appointmentToUpdate.host.toString()) {
+            return res.status(403).json({
+                message: 'not authorized to approve or reject this appointment'
             });
         }
 

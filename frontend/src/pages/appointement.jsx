@@ -24,9 +24,9 @@ function Appointment() {
   const { user } = useContext(AuthContext);
   const role = user?.role || "employee";
 
-  const canCreateAppointment = role === "admin" || role === "employee";
-  const canApproveAppointment = role === "admin";
-  const canGeneratePass = role === "admin";
+  const canCreateAppointment = role === "admin" || role === "employee" || role === "security";
+  const canApproveAppointment = role === "admin" || role === "employee";
+  const canGeneratePass = role === "admin" || role === "security";
 
   const [formData, setFormData] = useState({
     visitor: "",
@@ -100,10 +100,10 @@ function Appointment() {
     }
   };
 
-  const handleApprove = async (id) => {
+  const handleApprove = async (id, hostId) => {
     if (!id) return;
-    if (!canApproveAppointment) {
-      alert("Only admins can approve appointments.");
+    if (role !== "admin" && user?._id !== hostId && user?.id !== hostId) {
+      alert("Only admins or the specific host can approve this appointment.");
       return;
     }
     setActionId(id);
@@ -118,10 +118,10 @@ function Appointment() {
     }
   };
 
-  const handleReject = async (id) => {
+  const handleReject = async (id, hostId) => {
     if (!id) return;
-    if (!canApproveAppointment) {
-      alert("Only admins can reject appointments.");
+    if (role !== "admin" && user?._id !== hostId && user?.id !== hostId) {
+      alert("Only admins or the specific host can reject this appointment.");
       return;
     }
     setActionId(id);
@@ -159,7 +159,7 @@ function Appointment() {
   const handleGeneratePass = async (id) => {
     if (!id) return;
     if (!canGeneratePass) {
-      alert("Only admins can generate visitor passes from this screen.");
+      alert("Only admins and security can generate visitor passes.");
       return;
     }
     setActionId(id);
@@ -309,9 +309,9 @@ function Appointment() {
             Appointment access
           </p>
           <p className="mt-2 text-sm text-white/60">
-            {role === "admin"
-              ? "You can create appointments, approve requests, and generate passes."
-              : "You can create appointments only. Approval and pass issuance are reserved for admins."}
+            {role === "admin" && "You can create appointments, approve requests, and generate passes."}
+            {role === "employee" && "You can create appointments and approve requests where you are the host."}
+            {role === "security" && "You can create appointments and generate passes for approved visits."}
           </p>
         </div>
 
@@ -423,10 +423,10 @@ function Appointment() {
 
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center gap-3">
-                          {appt.status === "pending" && canApproveAppointment && (
+                          {appt.status === "pending" && (role === "admin" || (appt.host && (user?._id === appt.host._id || user?.id === appt.host._id))) && (
                             <>
                               <button
-                                onClick={() => handleApprove(appt._id)}
+                                onClick={() => handleApprove(appt._id, appt.host?._id)}
                                 disabled={actionId === appt._id}
                                 className="rounded-lg px-3 py-1.5 text-xs font-semibold
                                            bg-indigo-500/15 text-indigo-200 border border-indigo-500/20
@@ -437,7 +437,7 @@ function Appointment() {
                               </button>
 
                               <button
-                                onClick={() => handleReject(appt._id)}
+                                onClick={() => handleReject(appt._id, appt.host?._id)}
                                 disabled={actionId === appt._id}
                                 className="rounded-lg px-3 py-1.5 text-xs font-semibold
                                            bg-rose-500/15 text-rose-200 border border-rose-500/20
