@@ -258,7 +258,7 @@ function Navbar() {
                         <>
                             {/* Hamburger Menu Toggle (Mobile Only) */}
                             <button 
-                                className={\`vp-hamburger \${isMobileMenuOpen ? 'open' : ''}\`} 
+                                className={`vp-hamburger ${isMobileMenuOpen ? 'open' : ''}`} 
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 aria-label="Toggle menu"
                             >
@@ -270,18 +270,18 @@ function Navbar() {
                             {/* Desktop Menu */}
                             <div className="vp-desktop-menu">
                                 <div className="vp-links">
-                                    <Link to="/dashboard"    className={\`vp-link\${isActive("/dashboard")    ? " vp-link-active" : ""}\`}>Dashboard</Link>
+                                    <Link to="/dashboard"    className={`vp-link${isActive("/dashboard")    ? " vp-link-active" : ""}`}>Dashboard</Link>
                                     {canAccess(["admin", "security"]) && (
-                                        <Link to="/visitors" className={\`vp-link\${isActive("/visitors") ? " vp-link-active" : ""}\`}>Visitors</Link>
+                                        <Link to="/visitors" className={`vp-link${isActive("/visitors") ? " vp-link-active" : ""}`}>Visitors</Link>
                                     )}
                                     {canAccess(["admin", "employee"]) && (
-                                        <Link to="/appointments" className={\`vp-link\${isActive("/appointments") ? " vp-link-active" : ""}\`}>Appointments</Link>
+                                        <Link to="/appointments" className={`vp-link${isActive("/appointments") ? " vp-link-active" : ""}`}>Appointments</Link>
                                     )}
                                     {canAccess(["admin", "security"]) && (
-                                        <Link to="/check" className={\`vp-link\${isActive("/check") ? " vp-link-active" : ""}\`}>Check In/Out</Link>
+                                        <Link to="/check" className={`vp-link${isActive("/check") ? " vp-link-active" : ""}`}>Check In/Out</Link>
                                     )}
                                     {canAccess(["admin"]) && (
-                                        <Link to="/users" className={\`vp-link\${isActive("/users") ? " vp-link-active" : ""}\`}>Users</Link>
+                                        <Link to="/users" className={`vp-link${isActive("/users") ? " vp-link-active" : ""}`}>Users</Link>
                                     )}
                                 </div>
 
@@ -295,23 +295,23 @@ function Navbar() {
                             </div>
                             
                             {/* Mobile Menu Dropdown */}
-                            <div className={\`vp-mobile-menu \${isMobileMenuOpen ? 'open' : ''}\`}>
+                            <div className={`vp-mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
                                 <div className="vp-mobile-role">
                                     Logged in as {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}
                                 </div>
                                 
-                                <Link to="/dashboard" onClick={closeMenu} className={\`vp-link\${isActive("/dashboard") ? " vp-link-active" : ""}\`}>Dashboard</Link>
+                                <Link to="/dashboard" onClick={closeMenu} className={`vp-link${isActive("/dashboard") ? " vp-link-active" : ""}`}>Dashboard</Link>
                                 {canAccess(["admin", "security"]) && (
-                                    <Link to="/visitors" onClick={closeMenu} className={\`vp-link\${isActive("/visitors") ? " vp-link-active" : ""}\`}>Visitors</Link>
+                                    <Link to="/visitors" onClick={closeMenu} className={`vp-link${isActive("/visitors") ? " vp-link-active" : ""}`}>Visitors</Link>
                                 )}
                                 {canAccess(["admin", "employee"]) && (
-                                    <Link to="/appointments" onClick={closeMenu} className={\`vp-link\${isActive("/appointments") ? " vp-link-active" : ""}\`}>Appointments</Link>
+                                    <Link to="/appointments" onClick={closeMenu} className={`vp-link${isActive("/appointments") ? " vp-link-active" : ""}`}>Appointments</Link>
                                 )}
                                 {canAccess(["admin", "security"]) && (
-                                    <Link to="/check" onClick={closeMenu} className={\`vp-link\${isActive("/check") ? " vp-link-active" : ""}\`}>Check In/Out</Link>
+                                    <Link to="/check" onClick={closeMenu} className={`vp-link${isActive("/check") ? " vp-link-active" : ""}`}>Check In/Out</Link>
                                 )}
                                 {canAccess(["admin"]) && (
-                                    <Link to="/users" onClick={closeMenu} className={\`vp-link\${isActive("/users") ? " vp-link-active" : ""}\`}>Users</Link>
+                                    <Link to="/users" onClick={closeMenu} className={`vp-link${isActive("/users") ? " vp-link-active" : ""}`}>Users</Link>
                                 )}
                                 
                                 <button className="vp-logout" onClick={handleLogout}>
