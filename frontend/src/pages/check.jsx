@@ -124,7 +124,7 @@ export default function CheckPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* QR Scanner Section */}
-          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] p-6">
+          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] p-4 sm:p-6">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
                 <h2 className="text-lg font-extrabold text-white">Scan QR Code</h2>
@@ -189,7 +189,7 @@ export default function CheckPage() {
           </div>
 
           {/* Manual Entry Section */}
-          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] p-6 flex flex-col justify-center">
+          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] p-4 sm:p-6 flex flex-col justify-center">
             <div className="mb-6">
               <h2 className="text-lg font-extrabold text-white">Manual Entry</h2>
               <p className="text-sm text-white/55 mt-1">

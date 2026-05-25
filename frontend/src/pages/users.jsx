@@ -77,7 +77,7 @@ export default function UsersPage() {
 
         <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur shadow-[0_20px_55px_-35px_rgba(0,0,0,0.9)] overflow-hidden">
           <div className="border-b border-white/10 px-6 py-4">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-extrabold text-white">Registered Users</h2>
                 <p className="text-sm text-white/55 mt-1">Change a user role from the dropdown.</p>

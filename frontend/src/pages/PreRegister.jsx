@@ -88,7 +88,7 @@ function PreRegister() {
           <p className="mt-2 text-sm text-white/60">Fill out your details to request an appointment.</p>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-neutral-950 p-8 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.9)]">
+        <div className="rounded-3xl border border-white/10 bg-neutral-950 p-5 sm:p-8 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.9)]">
           {message && (
             <div className="mb-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
               {message}

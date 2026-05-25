@@ -422,7 +422,7 @@ function Appointment() {
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                           {appt.status === "pending" && (role === "admin" || (appt.host && (user?._id === appt.host._id || user?.id === appt.host._id))) && (
                             <>
                               <button
@@ -492,7 +492,7 @@ function Appointment() {
         {/* Generated Pass Modal */}
         {generatedPassData && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-            <div className="w-full max-w-sm rounded-3xl border border-white/10 bg-neutral-950 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.95)] p-7 text-center">
+            <div className="w-full max-w-sm rounded-3xl border border-white/10 bg-neutral-950 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.95)] p-5 sm:p-7 text-center">
               <div className="mx-auto mb-4 h-10 w-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
                 <svg
                   className="h-5 w-5 text-emerald-200"
@@ -547,7 +547,7 @@ function Appointment() {
         {showModal && canCreateAppointment && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div className="w-full max-w-md rounded-3xl border border-white/10 bg-neutral-950 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.95)]">
-              <div className="p-7">
+              <div className="p-5 sm:p-7">
                 <div className="flex items-start justify-between gap-4 mb-6">
                   <div>
                     <h2 className="text-2xl font-bold text-white">

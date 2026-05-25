@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function Navbar() {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const role = user?.role;
 
@@ -17,10 +18,12 @@ function Navbar() {
 
     const handleLogout = () => {
         logout();
+        setIsMobileMenuOpen(false);
         navigate("/");
     };
 
     const isActive = (path) => location.pathname === path;
+    const closeMenu = () => setIsMobileMenuOpen(false);
 
     return (
         <>
@@ -80,6 +83,12 @@ function Navbar() {
                 @keyframes vp-pulse {
                     0%, 100% { box-shadow: 0 0 6px rgba(129,140,248,0.6); }
                     50%       { box-shadow: 0 0 16px rgba(56,189,248,0.9); }
+                }
+
+                .vp-desktop-menu {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
                 }
 
                 .vp-links {
@@ -150,20 +159,95 @@ function Navbar() {
 
                 .vp-logout:active { transform: translateY(0); }
 
-                @media (max-width: 768px) {
-                    .vp-nav { padding: 10px 12px; }
-                    .vp-link { font-size: 13px; padding: 7px 9px; }
-                    .vp-logo { font-size: 18px; }
+                /* Mobile Menu Toggle Button */
+                .vp-hamburger {
+                    display: none;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    width: 24px;
+                    height: 20px;
+                    background: transparent;
+                    border: none;
+                    cursor: pointer;
+                    padding: 0;
+                    z-index: 1001;
                 }
 
-                @media (max-width: 600px) {
-                    .vp-links { gap: 0; }
-                    .vp-link { padding: 7px 7px; font-size: 12px; }
-                    .vp-logout { padding: 7px 12px; font-size: 13px; }
+                .vp-hamburger-line {
+                    width: 24px;
+                    height: 2px;
+                    background: #ffffff;
+                    border-radius: 2px;
+                    transition: all 0.3s linear;
+                    transform-origin: 1px;
+                }
+
+                .vp-hamburger.open .vp-hamburger-line:first-child { transform: rotate(45deg); }
+                .vp-hamburger.open .vp-hamburger-line:nth-child(2) { opacity: 0; }
+                .vp-hamburger.open .vp-hamburger-line:nth-child(3) { transform: rotate(-45deg); }
+
+                /* Mobile Menu Styles */
+                .vp-mobile-menu {
+                    display: none;
+                    flex-direction: column;
+                    gap: 8px;
+                    position: absolute;
+                    top: 100%;
+                    left: 20px;
+                    right: 20px;
+                    margin-top: 8px;
+                    padding: 16px;
+                    background: rgba(6, 10, 22, 0.95);
+                    backdrop-filter: blur(25px) saturate(200%);
+                    -webkit-backdrop-filter: blur(25px) saturate(200%);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 16px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                    animation: vp-slideDown 0.3s ease forwards;
+                    z-index: 999;
+                }
+
+                @keyframes vp-slideDown {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                /* Responsive Logic */
+                @media (max-width: 900px) {
+                    .vp-desktop-menu { display: none; }
+                    .vp-hamburger { display: flex; }
+                    .vp-mobile-menu.open { display: flex; }
+                    .vp-nav { padding: 12px 16px; }
+                    .vp-mobile-menu .vp-link { 
+                        font-size: 16px; 
+                        padding: 12px; 
+                        text-align: center;
+                        background: rgba(255, 255, 255, 0.03);
+                    }
+                    .vp-mobile-menu .vp-link-active {
+                        background: rgba(99, 102, 241, 0.2) !important;
+                    }
+                    .vp-mobile-menu .vp-link-active::after { display: none; }
+                    .vp-mobile-menu .vp-logout {
+                        width: 100%;
+                        padding: 12px;
+                        font-size: 16px;
+                        margin-top: 8px;
+                    }
+                    .vp-mobile-role {
+                        text-align: center;
+                        font-size: 12px;
+                        color: rgba(255, 255, 255, 0.4);
+                        padding: 8px 0;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                        margin-bottom: 8px;
+                    }
                 }
             `}</style>
 
-            <nav className="vp-nav">
+            <nav className="vp-nav relative">
                 <div className="vp-nav-glass">
                     <h1 className="vp-logo">
                         <span className="vp-logo-dot" />
@@ -172,29 +256,68 @@ function Navbar() {
 
                     {user && (
                         <>
-                            <div className="vp-links">
-                                <Link to="/dashboard"    className={`vp-link${isActive("/dashboard")    ? " vp-link-active" : ""}`}>Dashboard</Link>
+                            {/* Hamburger Menu Toggle (Mobile Only) */}
+                            <button 
+                                className={\`vp-hamburger \${isMobileMenuOpen ? 'open' : ''}\`} 
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                aria-label="Toggle menu"
+                            >
+                                <div className="vp-hamburger-line" />
+                                <div className="vp-hamburger-line" />
+                                <div className="vp-hamburger-line" />
+                            </button>
+
+                            {/* Desktop Menu */}
+                            <div className="vp-desktop-menu">
+                                <div className="vp-links">
+                                    <Link to="/dashboard"    className={\`vp-link\${isActive("/dashboard")    ? " vp-link-active" : ""}\`}>Dashboard</Link>
+                                    {canAccess(["admin", "security"]) && (
+                                        <Link to="/visitors" className={\`vp-link\${isActive("/visitors") ? " vp-link-active" : ""}\`}>Visitors</Link>
+                                    )}
+                                    {canAccess(["admin", "employee"]) && (
+                                        <Link to="/appointments" className={\`vp-link\${isActive("/appointments") ? " vp-link-active" : ""}\`}>Appointments</Link>
+                                    )}
+                                    {canAccess(["admin", "security"]) && (
+                                        <Link to="/check" className={\`vp-link\${isActive("/check") ? " vp-link-active" : ""}\`}>Check In/Out</Link>
+                                    )}
+                                    {canAccess(["admin"]) && (
+                                        <Link to="/users" className={\`vp-link\${isActive("/users") ? " vp-link-active" : ""}\`}>Users</Link>
+                                    )}
+                                </div>
+
+                                <span className="vp-link" title={role || "user"}>
+                                    {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}
+                                </span>
+
+                                <button className="vp-logout" onClick={handleLogout}>
+                                    Logout
+                                </button>
+                            </div>
+                            
+                            {/* Mobile Menu Dropdown */}
+                            <div className={\`vp-mobile-menu \${isMobileMenuOpen ? 'open' : ''}\`}>
+                                <div className="vp-mobile-role">
+                                    Logged in as {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}
+                                </div>
+                                
+                                <Link to="/dashboard" onClick={closeMenu} className={\`vp-link\${isActive("/dashboard") ? " vp-link-active" : ""}\`}>Dashboard</Link>
                                 {canAccess(["admin", "security"]) && (
-                                    <Link to="/visitors" className={`vp-link${isActive("/visitors") ? " vp-link-active" : ""}`}>Visitors</Link>
+                                    <Link to="/visitors" onClick={closeMenu} className={\`vp-link\${isActive("/visitors") ? " vp-link-active" : ""}\`}>Visitors</Link>
                                 )}
                                 {canAccess(["admin", "employee"]) && (
-                                    <Link to="/appointments" className={`vp-link${isActive("/appointments") ? " vp-link-active" : ""}`}>Appointments</Link>
+                                    <Link to="/appointments" onClick={closeMenu} className={\`vp-link\${isActive("/appointments") ? " vp-link-active" : ""}\`}>Appointments</Link>
                                 )}
                                 {canAccess(["admin", "security"]) && (
-                                    <Link to="/check" className={`vp-link${isActive("/check") ? " vp-link-active" : ""}`}>Check In/Out</Link>
+                                    <Link to="/check" onClick={closeMenu} className={\`vp-link\${isActive("/check") ? " vp-link-active" : ""}\`}>Check In/Out</Link>
                                 )}
                                 {canAccess(["admin"]) && (
-                                    <Link to="/users" className={`vp-link${isActive("/users") ? " vp-link-active" : ""}`}>Users</Link>
+                                    <Link to="/users" onClick={closeMenu} className={\`vp-link\${isActive("/users") ? " vp-link-active" : ""}\`}>Users</Link>
                                 )}
+                                
+                                <button className="vp-logout" onClick={handleLogout}>
+                                    Logout
+                                </button>
                             </div>
-
-                            <span className="vp-link" title={role || "user"}>
-                                {role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}
-                            </span>
-
-                            <button className="vp-logout" onClick={handleLogout}>
-                                Logout
-                            </button>
                         </>
                     )}
                 </div>

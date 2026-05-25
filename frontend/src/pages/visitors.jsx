@@ -345,7 +345,7 @@ function Visitors() {
                     </td>
 
                     <td className="px-4 py-3">
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => openEditModal(visitor)}
                           className="text-xs font-semibold rounded-lg px-3 py-1.5
@@ -380,7 +380,7 @@ function Visitors() {
               className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-neutral-950 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.95)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-xl font-bold text-white">
