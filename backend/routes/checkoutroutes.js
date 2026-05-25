@@ -17,6 +17,9 @@ const findPass = async (idOrPassNumber) => {
 //check in
 router.post('/checkin/:passid',authmiddleware,async(req,res)=>{
     try{
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: "only admin can check in visitors" });
+        }
         const foundPass=await findPass(req.params.passid);
         if(!foundPass){
             return res.status(404).json({   
@@ -43,6 +46,9 @@ router.post('/checkin/:passid',authmiddleware,async(req,res)=>{
 //check out
 router.post('/checkout/:passid',authmiddleware,async(req,res)=>{
     try{
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: "only admin can check out visitors" });
+        }
         const foundPass=await findPass(req.params.passid);
         if(!foundPass){
             return res.status(404).json({

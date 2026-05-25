@@ -277,7 +277,7 @@ function Navbar() {
                                     {canAccess(["admin", "employee"]) && (
                                         <Link to="/appointments" className={`vp-link${isActive("/appointments") ? " vp-link-active" : ""}`}>Appointments</Link>
                                     )}
-                                    {canAccess(["admin", "security"]) && (
+                                    {canAccess(["admin"]) && (
                                         <Link to="/check" className={`vp-link${isActive("/check") ? " vp-link-active" : ""}`}>Check In/Out</Link>
                                     )}
                                     {canAccess(["admin"]) && (
@@ -307,7 +307,7 @@ function Navbar() {
                                 {canAccess(["admin", "employee"]) && (
                                     <Link to="/appointments" onClick={closeMenu} className={`vp-link${isActive("/appointments") ? " vp-link-active" : ""}`}>Appointments</Link>
                                 )}
-                                {canAccess(["admin", "security"]) && (
+                                {canAccess(["admin"]) && (
                                     <Link to="/check" onClick={closeMenu} className={`vp-link${isActive("/check") ? " vp-link-active" : ""}`}>Check In/Out</Link>
                                 )}
                                 {canAccess(["admin"]) && (
