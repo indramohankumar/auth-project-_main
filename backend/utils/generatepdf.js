@@ -16,7 +16,7 @@ const generatePDF=(pass,res)=>{
     });
     doc.moveDown();
     doc.fontSize(16).text(`Pass Number: ${pass.passnumber}`);
-    doc.text(`Visitor Name: ${pass.visitor.name}`);
+    doc.text(`Visitor Name: ${pass.visitor?.name || 'Unknown'}`);
     doc.text(`Valid Till: ${pass.validtill.toLocaleString()}`);
     doc.moveDown();
     doc.text('Scan QR code at entry');

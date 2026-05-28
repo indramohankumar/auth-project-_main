@@ -67,7 +67,7 @@ router.post('/:appointmentid',authmiddleware,async(req,res)=>{
         });
         router.get('/pdf/:passid',authmiddleware,async(req,res)=>{
             try{
-                const foundPass=await Pass.findById(req.params.passid)
+                const foundPass=await Pass.findById(req.params.passid).populate('visitor');
                 if(!foundPass){
                     return res.status(404).json({
                         message:"pass not found"
@@ -83,7 +83,7 @@ router.post('/:appointmentid',authmiddleware,async(req,res)=>{
         });
         router.get('/public/pdf/:passnumber',async(req,res)=>{
             try{
-                const foundPass=await Pass.findOne({ passnumber: req.params.passnumber });
+                const foundPass=await Pass.findOne({ passnumber: req.params.passnumber }).populate('visitor');
                 if(!foundPass){
                     return res.status(404).json({
                         message:"pass not found"

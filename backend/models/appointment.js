@@ -3,12 +3,14 @@ const appointmentSchema=new mongoose.Schema({
     visitor:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Visitor',
-        required:true
+        required:true,
+        index:true
     },
     host:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
-        required:true
+        required:true,
+        index:true
     },
     purpose:{
         type:String,

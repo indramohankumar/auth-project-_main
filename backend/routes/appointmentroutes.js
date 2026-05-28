@@ -1,10 +1,12 @@
 const express=require('express');
 const Appointment=require('../models/appointment');
 const authmiddleware=require('../middleware/authmiddleware');
+const validateRequest = require('../middleware/validationMiddleware');
+const { appointmentSchema } = require('../validation/schemas');
 const rolemiddleware=require('../middleware/rolemiddleware');
 const router=express.Router();
 //create appointment
-router.post('/',authmiddleware,async(req,res)=>{
+router.post('/', authmiddleware, validateRequest(appointmentSchema), async(req,res)=>{
     try{
         const createdAppointment=await Appointment.create(req.body);
         res.status(201).json({

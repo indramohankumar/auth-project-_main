@@ -11,20 +11,50 @@ const appointmentroutes=require('./routes/appointmentroutes');
 const passroutes=require('./routes/passroutes');
 const checkroutes=require('./routes/checkoutroutes');
 const dotenv=require('dotenv');
-const app=express();
+const logger=require('./utils/logger');
+const app = express();
 dotenv.config();
+let limiter = (req, res, next) => next(); // Pass-through fallback
+try {
+    const rateLimit = require('express-rate-limit');
+    limiter = rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 100,
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: { message: 'Too many requests from this IP' }
+    });
+} catch (e) {
+    logger.info("express-rate-limit is not installed locally. Bypassing rate limiting.");
+}
+
+const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : ['http://localhost:5173'];
+
 app.use(express.json());
-app.use(cors()); // Allow all origins for production
+app.use(limiter);
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/passes", passroutes);
 app.use("/api/check", checkroutes);
 //console.log("URI IS:", process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
-    console.log("connected to database");
+    logger.info("connected to database");
 })
 .catch((err)=>{
-    console.log("error connecting to database",err);
+    logger.error("error connecting to database: %s", err.message);
 });
 app.use('/api/auth',authroutes);
 app.use('/api/users',userroutes);
@@ -50,5 +80,5 @@ app.get('/',(req,res)=>{
 });
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`server is running on port ${PORT}`);
+    logger.info(`server is running on port ${PORT}`);
 });

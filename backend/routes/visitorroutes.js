@@ -5,6 +5,8 @@ const path=require('path');
 const Visitor =require('../models/visitor');
 const Appointment = require('../models/appointment');
 const authmiddleware=require('../middleware/authmiddleware');
+const validateRequest = require('../middleware/validationMiddleware');
+const { visitorSchema } = require('../validation/schemas');
 
 const router=express.Router();
 
@@ -59,7 +61,7 @@ const removePhotoFile = (photoUrl) => {
 };
 
 //public register visitor
-router.post('/public-register', upload.single('photo'), async(req,res)=>{
+router.post('/public-register', upload.single('photo'), validateRequest(visitorSchema), async(req,res)=>{
     try{
         const visitorData = { ...req.body };
         const photoUrl = buildPhotoUrl(req.file);
@@ -92,7 +94,7 @@ router.post('/public-register', upload.single('photo'), async(req,res)=>{
 });
 
 //create visitor
-router.post('/',authmiddleware,upload.single('photo'),async(req,res)=>{
+router.post('/',authmiddleware,upload.single('photo'), validateRequest(visitorSchema), async(req,res)=>{
     try{
         const visitorData = {
             ...req.body,

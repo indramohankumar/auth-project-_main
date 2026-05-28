@@ -4,11 +4,14 @@ const CheckLog=require('../models/checklogs');
 const authmiddleware=require('../middleware/authmiddleware');
 const router=express.Router();
 
+const mongoose = require('mongoose');
+
 // Helper to find pass by either ID or passnumber
 const findPass = async (idOrPassNumber) => {
     // If it looks like a Mongo ID (24 hex chars)
-    if (idOrPassNumber.match(/^[0-9a-fA-F]{24}$/)) {
-        return await pass.findById(idOrPassNumber);
+    if (mongoose.isValidObjectId(idOrPassNumber)) {
+        const foundPass = await pass.findById(idOrPassNumber);
+        if (foundPass) return foundPass;
     }
     // Otherwise, search by the string passnumber
     return await pass.findOne({ passnumber: idOrPassNumber });

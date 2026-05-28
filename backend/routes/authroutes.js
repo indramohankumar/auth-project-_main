@@ -5,6 +5,8 @@ const User=require('../models/user');
 const router=express.Router();
 const jwt=require('jsonwebtoken');
 const authmiddleware=require('../middleware/authmiddleware');
+const validateRequest = require('../middleware/validationMiddleware');
+const { registerSchema, loginSchema } = require('../validation/schemas');
 
 const stripPassword = (user) => {
     if (!user) {
@@ -37,7 +39,7 @@ router.get('/me', authmiddleware, async (req, res) => {
     }
 });
 
-router.post('/register',async(req, res)=>{
+router.post('/register', validateRequest(registerSchema), async(req, res)=>{
     try{
         const {name,email,password}=req.body;
         //check existing user
@@ -69,7 +71,7 @@ router.post('/register',async(req, res)=>{
         });
     }
 });
-router.post('/login',async(req,res)=>{
+router.post('/login', validateRequest(loginSchema), async(req,res)=>{
     try{
         const {email,password}=req.body;
         //check user
