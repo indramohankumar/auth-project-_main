@@ -22,9 +22,9 @@ An intuitive, secure, and modern MERN-stack application designed to streamline v
 
 *(Create a folder called `screenshots` in your repository and upload your images there to make these visible!)*
 
-| Admin Dashboard | Visitor Registration |
+| Admin Dashboard | Pre-Registration |
 | :---: | :---: |
-| ![Dashboard](screenshots/dashboard.png) | ![Registration](screenshots/register.png) |
+| ![Dashboard](screenshots/dashboard.png) | ![Pre-Registration](screenshots/preregister.png) |
 | **Pass Generation** | **Security Check-In** |
 | ![Pass](screenshots/pass.png) | ![Check-In](screenshots/checkin.png) |
 
