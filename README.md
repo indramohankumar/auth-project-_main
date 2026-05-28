@@ -13,8 +13,8 @@ An intuitive, secure, and modern MERN-stack application designed to streamline v
 <br />
 
 ## 🎥 Project Demo
-*(Replace this link with your actual YouTube or Loom video link!)*
-[👉 **Watch the Full Video Walkthrough Here**](https://youtube.com/)
+
+[👉 **Watch the Full Video Walkthrough Here**](https://youtu.be/DSQmdKu1610?si=MfbVPgdo1njwAw4K)
 
 ---
 
