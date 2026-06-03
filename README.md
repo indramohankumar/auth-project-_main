@@ -16,29 +16,29 @@ A modern **MERN-stack** visitor management application for offices/campuses that
 
 ---
 
-## 📌 Table of Contents
+## 🧭 Table of Contents
 
-- [About](#-about)
-- [Why this project](#-why-this-project)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [How it works (high level flow)](#-how-it-works-high-level-flow)
-- [Roles & Permissions](#-roles--permissions)
-- [Project Structure](#-project-structure)
-- [Getting Started (Local Setup)](#-getting-started-local-setup)
+- [✅ About](#-about)
+- [🎯 Why this project](#-why-this-project)
+- [🚀 Key Features](#-key-features)
+- [🧰 Tech Stack](#-tech-stack)
+- [🔄 How it works (high level flow)](#-how-it-works-high-level-flow)
+- [🧑‍💼 Roles & Permissions](#-roles--permissions)
+- [📂 Project Structure](#-project-structure)
+- [🛠️ Getting Started (Local Setup)](#️-getting-started-local-setup)
   - [Prerequisites](#prerequisites)
-  - [Clone](#1-clone-the-repository)
-  - [Environment Variables](#2-environment-variables)
-  - [Install & Run](#3-install--run)
-  - [Seed Demo Data](#4-seed-demo-data)
-- [API Overview](#-api-overview)
-- [Deployment](#-deployment)
-- [Screenshots](#-screenshots)
-- [Demo Video](#-demo-video)
-- [Troubleshooting](#-troubleshooting)
-- [Security Notes](#-security-notes)
-- [Contributing](#-contributing)
-- [License](#-license)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Environment Variables](#2-environment-variables)
+  - [3. Install & Run](#3-install--run)
+  - [4. Seed Demo Data](#4-seed-demo-data)
+- [🧪 API Overview](#-api-overview)
+- [🌐 Deployment](#-deployment)
+- [🖼️ Screenshots](#-screenshots)
+- [🎥 Demo Video](#-demo-video)
+- [🧩 Troubleshooting](#-troubleshooting)
+- [🔐 Security Notes](#-security-notes)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ---
 
